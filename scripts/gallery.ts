@@ -22,7 +22,8 @@ class TransitionObject
   start()
   {
     this.index = 0;
-    nextPicture(this.ctx, ANIMATION.FADE, this.width, this.height, this.images[0], this.images[0], 1,1, 1, now());
+    nextPicture(this.ctx, ANIMATION.FADE, this.width, this.height, this.imgWidths[0],
+                this.imgHeights[0], this.images[0], this.images[0], 1,1, 1, now());
   }
   
   refresh()
@@ -40,7 +41,18 @@ class TransitionObject
   next(animationType, newCols = 5, newRows = 5, totalTime = 2000, startTime = now())
   {
     var nextPic = (this.index + 1) % this.images.length;
-    nextPicture(this.ctx, animationType, this.width, this.height, this.images[this.index], this.images[nextPic], newCols,newRows, totalTime, startTime);
+    nextPicture(this.ctx,
+                animationType,
+                this.width,
+                this.height,
+                this.imgWidths[this.index],
+                this.imgHeights[this.index],
+                this.images[this.index],
+                this.images[nextPic],
+                newCols,
+                newRows,
+                totalTime,
+                startTime);
     this.index = nextPic;
   }
 }
@@ -219,8 +231,9 @@ enum ANIMATION
 }
 
 //The function itself!
-function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols = 5, newRows = 5, totalTime = 2000, startTime = now(), firstRun = 1, randomStorage = [])
-{  
+function nextPicture(ctx, animationType, width, height, originalWidth, originalHeight, oldFile, newFile, newCols = 5, newRows = 5, totalTime = 2000, startTime = now(), firstRun = 1, randomStorage = [])
+{
+  console.log("NEXT");
   //Time calculations
   var delta = now() - startTime;      // time progressed so far
   var per = delta/totalTime;          // fraction (percentage) of way through total animation time
@@ -247,10 +260,10 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
 
   
   //setup the new image first (to be drawn over in a moment) - HULK
-  var newGrid = new grid(width, height, width, height, colsForNewGrid, rowsForNewGrid, newFile, ctx);
+  var newGrid = new grid(width, height, originalWidth, originalHeight, colsForNewGrid, rowsForNewGrid, newFile, ctx);
 
   //write the old image on top (which is going to animate itself away) - ENTERPRISE
-  var oldGrid = new grid(width, height, width, height, colsForOldGrid, rowsForOldGrid, oldFile,ctx);
+  var oldGrid = new grid(width, height, originalWidth, originalHeight, colsForOldGrid, rowsForOldGrid, oldFile,ctx);
 
   //Do whatever you're going to do to the old image
   switch (animationType)
@@ -635,14 +648,14 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
   {
     requestAnimationFrame(function()
                           {      
-      nextPicture(ctx, animationType, width, height, oldFile,newFile, newCols, newRows, totalTime, startTime, 0, randomStorage)  
+      nextPicture(ctx, animationType, width, height, originalWidth, originalHeight, oldFile,newFile, newCols, newRows, totalTime, startTime, 0, randomStorage)  
     }); 
   }
   else
   {
     //FINALISE - just left with the new image (cleaner, guarantees good remains)
     ctx.clearRect(0,0,width,height);     
-    var newGrid = new grid(width, height, width, height, 1, 1, newFile, ctx);
+    var newGrid = new grid(width, height, originalWidth, originalHeight, 1, 1, newFile, ctx);
     newGrid.draw();
   }
 }

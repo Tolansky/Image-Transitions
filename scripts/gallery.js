@@ -9,7 +9,7 @@ var TransitionObject = (function () {
     }
     TransitionObject.prototype.start = function () {
         this.index = 0;
-        nextPicture(this.ctx, ANIMATION.FADE, this.width, this.height, this.images[0], this.images[0], 1, 1, 1, now());
+        nextPicture(this.ctx, ANIMATION.FADE, this.width, this.height, this.imgWidths[0], this.imgHeights[0], this.images[0], this.images[0], 1, 1, 1, now());
     };
     TransitionObject.prototype.refresh = function () {
         var imagesToLoad = document.getElementsByClassName(this.imageClass);
@@ -26,7 +26,7 @@ var TransitionObject = (function () {
         if (totalTime === void 0) { totalTime = 2000; }
         if (startTime === void 0) { startTime = now(); }
         var nextPic = (this.index + 1) % this.images.length;
-        nextPicture(this.ctx, animationType, this.width, this.height, this.images[this.index], this.images[nextPic], newCols, newRows, totalTime, startTime);
+        nextPicture(this.ctx, animationType, this.width, this.height, this.imgWidths[this.index], this.imgHeights[this.index], this.images[this.index], this.images[nextPic], newCols, newRows, totalTime, startTime);
         this.index = nextPic;
     };
     return TransitionObject;
@@ -149,13 +149,14 @@ var ANIMATION;
     ANIMATION[ANIMATION["SPLICE2"] = 15] = "SPLICE2";
 })(ANIMATION || (ANIMATION = {}));
 //The function itself!
-function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols, newRows, totalTime, startTime, firstRun, randomStorage) {
+function nextPicture(ctx, animationType, width, height, originalWidth, originalHeight, oldFile, newFile, newCols, newRows, totalTime, startTime, firstRun, randomStorage) {
     if (newCols === void 0) { newCols = 5; }
     if (newRows === void 0) { newRows = 5; }
     if (totalTime === void 0) { totalTime = 2000; }
     if (startTime === void 0) { startTime = now(); }
     if (firstRun === void 0) { firstRun = 1; }
     if (randomStorage === void 0) { randomStorage = []; }
+    console.log("NEXT");
     //Time calculations
     var delta = now() - startTime; // time progressed so far
     var per = delta / totalTime; // fraction (percentage) of way through total animation time
@@ -174,9 +175,9 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
         rowsForOldGrid = 1;
     }
     //setup the new image first (to be drawn over in a moment) - HULK
-    var newGrid = new grid(width, height, width, height, colsForNewGrid, rowsForNewGrid, newFile, ctx);
+    var newGrid = new grid(width, height, originalWidth, originalHeight, colsForNewGrid, rowsForNewGrid, newFile, ctx);
     //write the old image on top (which is going to animate itself away) - ENTERPRISE
-    var oldGrid = new grid(width, height, width, height, colsForOldGrid, rowsForOldGrid, oldFile, ctx);
+    var oldGrid = new grid(width, height, originalWidth, originalHeight, colsForOldGrid, rowsForOldGrid, oldFile, ctx);
     //Do whatever you're going to do to the old image
     switch (animationType) {
         ////////////////////////////////////////////////////////////////
@@ -455,13 +456,13 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
     //Recursively call the animation function
     if (per < 1 || totalTime < 0) {
         requestAnimationFrame(function () {
-            nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols, newRows, totalTime, startTime, 0, randomStorage);
+            nextPicture(ctx, animationType, width, height, originalWidth, originalHeight, oldFile, newFile, newCols, newRows, totalTime, startTime, 0, randomStorage);
         });
     }
     else {
         //FINALISE - just left with the new image (cleaner, guarantees good remains)
         ctx.clearRect(0, 0, width, height);
-        var newGrid = new grid(width, height, width, height, 1, 1, newFile, ctx);
+        var newGrid = new grid(width, height, originalWidth, originalHeight, 1, 1, newFile, ctx);
         newGrid.draw();
     }
 }
