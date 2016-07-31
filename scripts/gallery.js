@@ -1,36 +1,36 @@
 /// <reference path="jquery.d.ts" />
 console.clear();
 //////////////////////////////////
-// THIS WOULD RUN IN HTML
-//////////////////////////////////
-var picsToUse = [];
-picsToUse[0] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg';
-picsToUse[1] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_hulk.jpg';
-picsToUse[2] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_big_tardis_2.jpg';
-picsToUse[3] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_ghostbusters.jpg';
-picsToUse[4] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_batmanface.jpg';
-picsToUse[5] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_london.jpg';
-picsToUse[6] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_inception.jpg';
-picsToUse[7] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_rhul.jpg';
-//////////////////////////////////
-// OBJECT DEFINITION
-//////////////////////////////////
-//var c = document.getElementById("myCanvas");
-//var ctx = c.getContext("2d");
-//////////////////////////////////
-// TRACKING VARIABLES etc
-//////////////////////////////////
-var pic = 0;
-var picCount = 0;
-var pics = [];
-//////////////////////////////////
 // CLASS DEFINITIONS
 //////////////////////////////////
-prepImages(picsToUse); // prep the images
-preloadImages(pics); // Preload them to make things easier
-//////////////////////////////////
-// CLASS DEFINITIONS
-//////////////////////////////////
+var TransitionObject = (function () {
+    function TransitionObject() {
+        this.index = 0;
+    }
+    TransitionObject.prototype.start = function () {
+        this.index = 0;
+        nextPicture(this.ctx, ANIMATION.FADE, this.width, this.height, this.images[0], this.images[0], 1, 1, 1, now());
+    };
+    TransitionObject.prototype.refresh = function () {
+        var imagesToLoad = document.getElementsByClassName(this.imageClass);
+        for (var i = 0; i < imagesToLoad.length; i++) {
+            var o = imagesToLoad.item(i);
+            this.images[i] = $(o).attr('src');
+            this.imgWidths[i] = parseInt($(o).css("width").replace("px", ""));
+            this.imgHeights[i] = parseInt($(o).css("height").replace("px", ""));
+        }
+    };
+    TransitionObject.prototype.next = function (animationType, newCols, newRows, totalTime, startTime) {
+        if (newCols === void 0) { newCols = 5; }
+        if (newRows === void 0) { newRows = 5; }
+        if (totalTime === void 0) { totalTime = 2000; }
+        if (startTime === void 0) { startTime = now(); }
+        var nextPic = (this.index + 1) % this.images.length;
+        nextPicture(this.ctx, animationType, this.width, this.height, this.images[this.index], this.images[nextPic], newCols, newRows, totalTime, startTime);
+        this.index = nextPic;
+    };
+    return TransitionObject;
+}());
 var pos = (function () {
     function pos() {
     }
@@ -126,13 +126,6 @@ var grid = (function () {
     return grid;
 }());
 //////////////////////////////////
-// SETUP
-//////////////////////////////////
-function prepImages(newImages) {
-    pics = newImages;
-    picCount = newImages.length;
-}
-//////////////////////////////////
 // CUSTOM ANIMATION
 //////////////////////////////////
 //Options
@@ -155,25 +148,14 @@ var ANIMATION;
     ANIMATION[ANIMATION["HCROSSFADE"] = 14] = "HCROSSFADE";
     ANIMATION[ANIMATION["SPLICE2"] = 15] = "SPLICE2";
 })(ANIMATION || (ANIMATION = {}));
-//generic storage area for non calculated fields that need to last throughout cycles
-var randomStorage = [];
-var x = -1;
-function next(ctx, animationType, width, height, newCols, newRows, totalTime, startTime) {
-    if (newCols === void 0) { newCols = 5; }
-    if (newRows === void 0) { newRows = 5; }
-    if (totalTime === void 0) { totalTime = 2000; }
-    if (startTime === void 0) { startTime = now(); }
-    var nextPic = (pic + 1) % pics.length;
-    nextPicture(ctx, animationType, width, height, pics[pic], pics[nextPic], newCols, newRows, totalTime, startTime);
-    pic = nextPic;
-}
 //The function itself!
-function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols, newRows, totalTime, startTime, firstRun) {
+function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols, newRows, totalTime, startTime, firstRun, randomStorage) {
     if (newCols === void 0) { newCols = 5; }
     if (newRows === void 0) { newRows = 5; }
     if (totalTime === void 0) { totalTime = 2000; }
     if (startTime === void 0) { startTime = now(); }
     if (firstRun === void 0) { firstRun = 1; }
+    if (randomStorage === void 0) { randomStorage = []; }
     //Time calculations
     var delta = now() - startTime; // time progressed so far
     var per = delta / totalTime; // fraction (percentage) of way through total animation time
@@ -191,8 +173,6 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
         colsForOldGrid = 1;
         rowsForOldGrid = 1;
     }
-    //Clear the canvas
-    // ctx.clearRect(0,0,800,600)
     //setup the new image first (to be drawn over in a moment) - HULK
     var newGrid = new grid(width, height, width, height, colsForNewGrid, rowsForNewGrid, newFile, ctx);
     //write the old image on top (which is going to animate itself away) - ENTERPRISE
@@ -224,6 +204,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
         ////////////////////////////////////////////////////////////////
         //Set opacity based on current percentage
         case ANIMATION.FADE:
+            var x = -1;
             for (var i = 0; i < oldGrid.list.length; i++) {
                 var newPer = Math.max(1 - (smooth(per)), 0);
                 oldGrid.list[i].opacity = newPer;
@@ -474,7 +455,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
     //Recursively call the animation function
     if (per < 1 || totalTime < 0) {
         requestAnimationFrame(function () {
-            nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols, newRows, totalTime, startTime, 0);
+            nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols, newRows, totalTime, startTime, 0, randomStorage);
         });
     }
     else {
@@ -484,9 +465,6 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
         newGrid.draw();
     }
 }
-///////////////////////
-// DEMO - for demo purposes, start with pic1
-///////////////////////
 ///////////////////////
 // HELPER FUNCTIONS
 ///////////////////////
@@ -531,55 +509,39 @@ function clog(s) {
 function now() {
     return new Date().getTime();
 }
-//minified because we don't need to read it right now
-function preloadImages(array) {
-    //don't do anything - you should be using the preload plugin ;-)
-    //  preloadImages.list||(preloadImages.list=[]);for(var list=preloadImages.list,i=0;i<array.length;i++){var img=new Image;img.onload=function(){var i=list.indexOf(this);-1!==i&&list.splice(i,1)},list.push(img),img.src=array[i]}
-}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // JQUERY PLUGIN
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (function ($) {
-    $.fn.showPicture = function (options) {
+    $.fn.transitionObject = function (options) {
         var settings = $.extend({
-            // These are the defaults.        
-            picture: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg',
+            imageClass: 'imageClass',
             width: 800,
             height: 600
         }, options);
-        var canvas = this[0];
-        var ctx = canvas.getContext("2d");
-        nextPicture(ctx, ANIMATION.FADE, settings.width, settings.height, settings.picture, settings.picture, 1, 1, 1, now());
-    };
-    $.fn.showNext = function (options) {
-        //The default settings, can be overridden
-        var settings = $.extend({
-            // These are the defaults.        
-            animation: ANIMATION.FALL,
-            fadeTime: 400,
-            width: 800,
-            height: 600,
-            cols: 5,
-            rows: 5,
-            duration: 2000,
-            backwards: false
-        }, options);
-        var canvas = this[0];
-        var ctx = canvas.getContext("2d");
-        var nextPic = 0;
-        if (settings.backwards) {
-            nextPic = (pic - 1) % pics.length;
-            if (nextPic < 0) {
-                nextPic = pics.length - 1;
-            }
+        //Assign the images to an array to pass in in a moment
+        var images = [];
+        var originalWidths = [];
+        var originalHeights = [];
+        var imagesToLoad = document.getElementsByClassName(settings.imageClass);
+        for (var i = 0; i < imagesToLoad.length; i++) {
+            var o = imagesToLoad.item(i);
+            images[i] = $(o).attr('src');
+            originalWidths[i] = parseInt($(o).css("width").replace("px", ""));
+            originalHeights[i] = parseInt($(o).css("height").replace("px", ""));
         }
-        else {
-            nextPic = (pic + 1) % pics.length;
-        }
-        nextPicture(ctx, settings.animation, settings.width, settings.height, pics[pic], pics[nextPic], settings.cols, settings.rows, settings.duration, now());
-        pic = nextPic;
+        //Build the Transition Object
+        var tr = new TransitionObject();
+        tr.imageClass = settings.imageClass;
+        tr.width = settings.width; // width
+        tr.height = settings.height; // height
+        tr.ctx = this[0].getContext("2d"); // canvas object (2d)
+        tr.images = images; // images array built above
+        tr.imgWidths = originalWidths; // array of original image widths
+        tr.imgHeights = originalHeights; // array of original image heights
+        tr.start(); // kick off with the first image
+        return tr; // return the transition object
     };
 }(jQuery));
-$('#myCanvas').showPicture({ picture: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg' });

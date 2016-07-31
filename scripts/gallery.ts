@@ -4,50 +4,46 @@ console.clear();
 
 
 
-
-//////////////////////////////////
-// THIS WOULD RUN IN HTML
-//////////////////////////////////
-var picsToUse = [];
-picsToUse[0] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg';
-picsToUse[1] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_hulk.jpg';
-picsToUse[2] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_big_tardis_2.jpg';
-picsToUse[3] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_ghostbusters.jpg';
-picsToUse[4] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_batmanface.jpg';
-picsToUse[5] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_london.jpg';
-picsToUse[6] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_inception.jpg';
-picsToUse[7] = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_rhul.jpg';
-
-
-
-//////////////////////////////////
-// OBJECT DEFINITION
-//////////////////////////////////
-//var c = document.getElementById("myCanvas");
-//var ctx = c.getContext("2d");
-
-
-
-//////////////////////////////////
-// TRACKING VARIABLES etc
-//////////////////////////////////
-var pic = 0;
-var picCount = 0;
-var pics = [];
-
-
-
-
 //////////////////////////////////
 // CLASS DEFINITIONS
 //////////////////////////////////
-prepImages(picsToUse);    // prep the images
-preloadImages(pics);      // Preload them to make things easier
 
-
-//////////////////////////////////
-// CLASS DEFINITIONS
-//////////////////////////////////
+class TransitionObject
+{
+  index: number = 0;  
+  images: string[];
+  imageClass: string;
+  width: number;
+  height: number;
+  imgWidths: number[];
+  imgHeights: number[];
+  ctx;
+    
+  start()
+  {
+    this.index = 0;
+    nextPicture(this.ctx, ANIMATION.FADE, this.width, this.height, this.images[0], this.images[0], 1,1, 1, now());
+  }
+  
+  refresh()
+  {
+    var imagesToLoad = document.getElementsByClassName(this.imageClass);
+    for(var i = 0; i < imagesToLoad.length; i++)
+    {
+      var o = imagesToLoad.item(i)
+      this.images[i] = $(o).attr('src');
+      this.imgWidths[i] = parseInt($(o).css("width").replace("px",""));
+      this.imgHeights[i] = parseInt($(o).css("height").replace("px",""));
+    }
+  }
+  
+  next(animationType, newCols = 5, newRows = 5, totalTime = 2000, startTime = now())
+  {
+    var nextPic = (this.index + 1) % this.images.length;
+    nextPicture(this.ctx, animationType, this.width, this.height, this.images[this.index], this.images[nextPic], newCols,newRows, totalTime, startTime);
+    this.index = nextPic;
+  }
+}
 
 class pos
 {
@@ -60,154 +56,142 @@ class square
 {
   //this specific box (count, starting at zero)
   x: number;
-y: number;  
-
-//true across all boxes
-canvasWidth: number;
-canvasHeight: number;
-width:number;
-height:number;
-imagePath: string;
-originalWidth: number;  
-originalHeight: number;  
-xCount: number;
-yCount: number;
-xOffset: number;
-yOffset: number;
-left: number;
-top: number;
-opacity: number;
-
-
-constructor(x: number, y: number, canvasWidth: number, canvasHeight: number, imagePath: string, originalWidth: number, originalHeight: number, xCount = 4, yCount = 4, xOffset = 0, yOffset = 0, opacity = 1)
-{
-  //taken directly
-  this.x = x;
-  this.y = y;
-  this.canvasWidth = canvasWidth;
-  this.canvasHeight = canvasHeight;
-  this.imagePath = imagePath ;
-  this.originalWidth = originalWidth;
-  this.originalHeight = originalHeight;
-  this.xCount = xCount ;
-  this.yCount = yCount;
-  this.xOffset = originalWidth/xCount * x;
-  this.yOffset = originalHeight/yCount * y;    
-  this.opacity = opacity;
-
-  //calculated
-  this.left = canvasWidth/xCount * x;        
-  this.top = canvasHeight/yCount * y;
-  this.width = canvasWidth/xCount;
-  this.height = canvasHeight/yCount;  
-}
-
-draw(ctx)
-{    
-  //Reading from original image
-  var imageObj2 = new Image();    
-  var sx = this.xOffset;
-  var sy = this.yOffset;
-  var sWidth = this.originalWidth/this.xCount;
-  var sHeight = this.originalHeight/this.yCount;
-
-  //Positioning                          
-
-  var width = this.width;
-  var height = this.height;
-  var left = this.left;
-  var top = this.top;
-  var opacity = this.opacity;
-  imageObj2.src = this.imagePath;
-
-
-  if (opacity != 1)
+  y: number;  
+  
+  //true across all boxes
+  canvasWidth: number;
+  canvasHeight: number;
+  width:number;
+  height:number;
+  imagePath: string;
+  originalWidth: number;  
+  originalHeight: number;  
+  xCount: number;
+  yCount: number;
+  xOffset: number;
+  yOffset: number;
+  left: number;
+  top: number;
+  opacity: number;
+  
+  
+  constructor(x: number, y: number, canvasWidth: number, canvasHeight: number, imagePath: string, originalWidth: number, originalHeight: number, xCount = 4, yCount = 4, xOffset = 0, yOffset = 0, opacity = 1)
   {
-    ctx.globalAlpha = opacity;
+    //taken directly
+    this.x = x;
+    this.y = y;
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
+    this.imagePath = imagePath ;
+    this.originalWidth = originalWidth;
+    this.originalHeight = originalHeight;
+    this.xCount = xCount ;
+    this.yCount = yCount;
+    this.xOffset = originalWidth/xCount * x;
+    this.yOffset = originalHeight/yCount * y;    
+    this.opacity = opacity;
+  
+    //calculated
+    this.left = canvasWidth/xCount * x;        
+    this.top = canvasHeight/yCount * y;
+    this.width = canvasWidth/xCount;
+    this.height = canvasHeight/yCount;  
   }
-
-  ctx.drawImage(imageObj2,sx,sy,sWidth,sHeight,left,top,width,height);       
-
-  if (opacity != 1)
-  {
-    ctx.globalAlpha = 1;
+  
+  draw(ctx)
+  {    
+    //Reading from original image
+    var imageObj2 = new Image();    
+    var sx = this.xOffset;
+    var sy = this.yOffset;
+    var sWidth = this.originalWidth/this.xCount;
+    var sHeight = this.originalHeight/this.yCount;
+  
+    //Positioning                          
+  
+    var width = this.width;
+    var height = this.height;
+    var left = this.left;
+    var top = this.top;
+    var opacity = this.opacity;
+    imageObj2.src = this.imagePath;
+  
+  
+    if (opacity != 1)
+    {
+      ctx.globalAlpha = opacity;
+    }
+  
+    ctx.drawImage(imageObj2,sx,sy,sWidth,sHeight,left,top,width,height);       
+  
+    if (opacity != 1)
+    {
+      ctx.globalAlpha = 1;
+    }
+  
+  
   }
-
-
-}
 }
 
 
 class grid
 {
   rows: number;
-columns: number;
-squares: square[][] = [[],[]];
-list: square[] = [];
-opacity: number;
-count:number;
-file:string;
-newWidth:number;
-newHeight:number;
-originalWidth:number;
-originalHeight:number;
-ctx;
-
-constructor( newWidth, newHeight, originalWidth, originalHeight, columns, rows,file, ctx, opacity = 1)
-{    
-  this.rows = rows;
-  this.columns = columns;
-  this.ctx = ctx;
-  this.opacity = opacity;
-  this.count = rows * columns;
-  this.file = file;
-  this.newWidth = newWidth;
-  this.newHeight = newHeight;
-  this.originalHeight = originalHeight;
-  this.originalWidth = originalWidth;
-  this.buildSquares();
-
-}
-
-buildSquares()
-{
-  this.list = [];
-  for (var x = 0; x < this.columns; x++)
+  columns: number;
+  squares: square[][] = [[],[]];
+  list: square[] = [];
+  opacity: number;
+  count:number;
+  file:string;
+  newWidth:number;
+  newHeight:number;
+  originalWidth:number;
+  originalHeight:number;
+  ctx;
+  
+  constructor( newWidth, newHeight, originalWidth, originalHeight, columns, rows,file, ctx, opacity = 1)
+  {    
+    this.rows = rows;
+    this.columns = columns;
+    this.ctx = ctx;
+    this.opacity = opacity;
+    this.count = rows * columns;
+    this.file = file;
+    this.newWidth = newWidth;
+    this.newHeight = newHeight;
+    this.originalHeight = originalHeight;
+    this.originalWidth = originalWidth;
+    this.buildSquares();
+  }
+  
+  buildSquares()
   {
-    this.squares[x] = [];
-    for (var y = 0; y < this.rows; y++)
-    {        
-      var sq = new square(x, y, this.newWidth, this.newHeight, this.file, this.originalWidth, this.originalHeight, this.columns, this.rows, this.opacity);
-      this.squares[x][y] = sq;
-      this.list[this.list.length] = sq;
+    this.list = [];
+    for (var x = 0; x < this.columns; x++)
+    {
+      this.squares[x] = [];
+      for (var y = 0; y < this.rows; y++)
+      {        
+        var sq = new square(x, y, this.newWidth, this.newHeight, this.file, this.originalWidth, this.originalHeight, this.columns, this.rows, this.opacity);
+        this.squares[x][y] = sq;
+        this.list[this.list.length] = sq;
+      }    
     }    
-  }    
-}
-
-draw(secondGrid = null)
-{
-  for (var x = 0; x < this.columns; x++)
+  }
+  
+  draw(secondGrid = null)
   {
-    for (var y = 0; y < this.rows; y++)
-    {        
-      var sq = this.squares[x][y];
-      sq.draw(this.ctx);
+    for (var x = 0; x < this.columns; x++)
+    {
+      for (var y = 0; y < this.rows; y++)
+      {        
+        var sq = this.squares[x][y];
+        sq.draw(this.ctx);
+      }
     }
   }
 }
 
-}
-
-
-//////////////////////////////////
-// SETUP
-//////////////////////////////////
-
-function prepImages(newImages)
-{
-  pics = newImages;
-  picCount = newImages.length;
-}
 
 //////////////////////////////////
 // CUSTOM ANIMATION
@@ -215,40 +199,27 @@ function prepImages(newImages)
 
 //Options
 enum ANIMATION
-  {
+{
   FALL = 0,
-    SLIDE = 1,
-    FADE = 2,
-    COLUMNS = 3,
-    RANDOMCOLUMNS = 4,
-    SPLICE = 5,
-    EXPLODE = 6,
-    IMPLODE = 7,
-    SHRINKRANDOM = 8,
-    SHRINKHORIZONTAL = 9,
-    SHRINKVERTICAL = 10,
-    DROP = 11,
-    BUILD = 12,
-    VCROSSFADE = 13,
-    HCROSSFADE = 14,
-    SPLICE2 = 15
-
-}
-
-//generic storage area for non calculated fields that need to last throughout cycles
-var randomStorage = [];
-
-var x = -1;
-
-function next(ctx,animationType,width,height,newCols = 5, newRows = 5, totalTime = 2000, startTime = now())
-{    
-  var nextPic = (pic + 1)%pics.length;
-  nextPicture(ctx,animationType,width,height, pics[pic],pics[nextPic],newCols,newRows,totalTime,startTime);
-  pic = nextPic;
+  SLIDE = 1,
+  FADE = 2,
+  COLUMNS = 3,
+  RANDOMCOLUMNS = 4,
+  SPLICE = 5,
+  EXPLODE = 6,
+  IMPLODE = 7,
+  SHRINKRANDOM = 8,
+  SHRINKHORIZONTAL = 9,
+  SHRINKVERTICAL = 10,
+  DROP = 11,
+  BUILD = 12,
+  VCROSSFADE = 13,
+  HCROSSFADE = 14,
+  SPLICE2 = 15
 }
 
 //The function itself!
-function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols = 5, newRows = 5, totalTime = 2000, startTime = now(), firstRun = 1)
+function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCols = 5, newRows = 5, totalTime = 2000, startTime = now(), firstRun = 1, randomStorage = [])
 {  
   //Time calculations
   var delta = now() - startTime;      // time progressed so far
@@ -274,10 +245,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
 
   }
 
-  //Clear the canvas
-  // ctx.clearRect(0,0,800,600)
-
-
+  
   //setup the new image first (to be drawn over in a moment) - HULK
   var newGrid = new grid(width, height, width, height, colsForNewGrid, rowsForNewGrid, newFile, ctx);
 
@@ -316,9 +284,10 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
       }
       break;
 
-      ////////////////////////////////////////////////////////////////
-      //Set opacity based on current percentage
+    ////////////////////////////////////////////////////////////////
+    //Set opacity based on current percentage
     case ANIMATION.FADE:
+      var x = -1;
       for (var i = 0; i < oldGrid.list.length; i++)
       {
         var newPer = Math.max(1 - (smooth(per)),0);              
@@ -666,7 +635,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
   {
     requestAnimationFrame(function()
                           {      
-      nextPicture(ctx, animationType, width, height, oldFile,newFile, newCols, newRows, totalTime, startTime, 0)  
+      nextPicture(ctx, animationType, width, height, oldFile,newFile, newCols, newRows, totalTime, startTime, 0, randomStorage)  
     }); 
   }
   else
@@ -677,12 +646,6 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
     newGrid.draw();
   }
 }
-
-
-///////////////////////
-// DEMO - for demo purposes, start with pic1
-///////////////////////
-
 
 
 
@@ -747,14 +710,6 @@ function now()
   return new Date().getTime();
 }
 
-//minified because we don't need to read it right now
-function preloadImages(array)
-{
-  //don't do anything - you should be using the preload plugin ;-)
-//  preloadImages.list||(preloadImages.list=[]);for(var list=preloadImages.list,i=0;i<array.length;i++){var img=new Image;img.onload=function(){var i=list.indexOf(this);-1!==i&&list.splice(i,1)},list.push(img),img.src=array[i]}
-}
-
-
 
 
 
@@ -768,89 +723,42 @@ function preloadImages(array)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (function ( $ ) 
 {
-  $.fn.showPicture = function( options )
+   $.fn.transitionObject = function( options )
   {
     var settings = $.extend(
       {
-        // These are the defaults.        
-        picture: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg',
+        imageClass: 'imageClass',
         width:800,
         height:600
       }, options );
     
-    var canvas = this[0];
-    var ctx = canvas.getContext("2d");
-    nextPicture(ctx,
-                ANIMATION.FADE,
-                settings.width,
-                settings.height, 
-                settings.picture,
-                settings.picture,
-                1,
-                1,
-                1,
-                now());
+      
+    //Assign the images to an array to pass in in a moment
+    var images = [];
+    var originalWidths = [];
+    var originalHeights = [];
     
+    var imagesToLoad = document.getElementsByClassName(settings.imageClass);
+    for(var i = 0; i < imagesToLoad.length; i++)
+    {
+      var o = imagesToLoad.item(i)
+       images[i] = $(o).attr('src');
+       originalWidths[i] = parseInt($(o).css("width").replace("px",""));
+       originalHeights[i] = parseInt($(o).css("height").replace("px",""));
+    }
+        
+    
+    //Build the Transition Object
+    var tr = new TransitionObject();
+    tr.imageClass = settings.imageClass;
+    tr.width = settings.width;              // width
+    tr.height = settings.height;            // height
+    tr.ctx = this[0].getContext("2d");      // canvas object (2d)
+    tr.images = images;                     // images array built above
+    tr.imgWidths = originalWidths;          // array of original image widths
+    tr.imgHeights = originalHeights;        // array of original image heights
+    tr.start();                             // kick off with the first image
+    return tr;                              // return the transition object
   }
-  
-  
-  
-  
-  $.fn.showNext = function( options )
-  {
-    //The default settings, can be overridden
-    var settings = $.extend(
-      {
-        // These are the defaults.        
-        animation: ANIMATION.FALL,
-        fadeTime: 400,
-        width:800,
-        height:600,
-        cols: 5,
-        rows: 5,
-        duration: 2000,
-        backwards: false
-      }, options );
-
     
-    var canvas = this[0];
-    var ctx = canvas.getContext("2d");
-    
-    var nextPic = 0;
-    if (settings.backwards)
-    {
-      nextPic = (pic - 1)%pics.length;  
-      if (nextPic < 0)
-      {
-        nextPic = pics.length - 1
-      }
-    }
-    else
-    {
-      nextPic = (pic + 1)%pics.length;
-    }
-    
-    nextPicture(ctx,
-                settings.animation,
-                settings.width,
-                settings.height, 
-                pics[pic],
-                pics[nextPic],
-                settings.cols,
-                settings.rows,
-                settings.duration,
-                now());
-    
-    pic = nextPic;
-  }; 
 }( jQuery ));
-
-
-
-
-
-
-
-
-
-$('#myCanvas').showPicture({picture: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg'});
