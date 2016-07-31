@@ -1,86 +1,96 @@
 <html>
-<head>
-    <link rel="stylesheet" type="text/css" href="styles/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>        
-    <script src="scripts/jquery.preload-1.2.0.min.js"></script>    
-    <script src="scripts/gallery.js"></script>    
-</head>
-<body>    
-<table class="mainContent">
-  <tr>
-    <td height="600px">
-      <canvas id="myCanvas" width="960px" height="600px"></canvas>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <table id="controls">
-        <tr>          
-          <td><div class="button" onclick="gallery.next(ANIMATION.FALL, 10, 10, 600);">FALL</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.SLIDE, 10, 10, 600);">SLIDE</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.FADE, 1, 1, 1000);">FADE</div></td>
-        </tr>
-        <tr>
-          <td><div class="button" onclick="gallery.next(ANIMATION.COLUMNS, 10, 10, 2200);">COLUMNS</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.RANDOMCOLUMNS, 10, 10, 2200);">RANDOMCOLUMNS</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.SPLICE, 40, 1, 2200);">SPLICE</div></td>
-        </tr>
-        <tr>
-          <td><div class="button" onclick="gallery.next(ANIMATION.EXPLODE, 30, 30, 600);">EXPLODE</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.IMPLODE, 10, 10, 800);">IMPLODE</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.SHRINKRANDOM, 20, 20, 1200);">SHRINKRANDOM</div></td>
-        </tr>
-        <tr>
-          <td><div class="button" onclick="gallery.next(ANIMATION.SHRINKHORIZONTAL, 30, 20, 1400);">SHRINKHORIZONTAL</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.SHRINKVERTICAL, 30, 20, 1400);">SHRINKVERTICAL</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.DROP, 4, 4, 1400); ">DROP</div></td>
-        </tr>
-        <tr>
-          <td><div class="button" onclick="gallery.next(ANIMATION.BUILD, 2, 2, 1400);">BUILD</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.VCROSSFADE, 1, 60, 1000); ">VCROSSFADE</div></td>
-          <td><div class="button" onclick="gallery.next(ANIMATION.HCROSSFADE, 60, 10, 800);">HCROSSFADE</div></td>          
-        </tr>
-        <tr>          
-          <td><div class="button" onclick="gallery.next(ANIMATION.SPLICE2, 10, 1, 2200);">SPLICE2</div></td>                   
-        </tr>
-      </table>
-
-    </td>
-  </tr>
-</table>
-
-<img src="https://i.imgur.com/zESKRyl.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/jbssfFx.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/0bdcctG.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/JQWSHbz.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/gnvp9Kr.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/eMVyz3J.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/e6JE5eZ.jpg" class="imageToTransitionTo">
-<img src="https://i.imgur.com/sWU6aOe.jpg" class="imageToTransitionTo">
-
-<script>
+  <head>
+      <link rel="stylesheet" type="text/css" href="styles/style.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.js"></script>        
+      <script src="scripts/jquery.preload-1.2.0.min.js"></script>    
+      <script src="scripts/gallery.js"></script>    
+  </head>
+  <body>    
+    <table class="mainContent">
+      <tr>
+        <td height="600px">
+          <canvas id="myCanvas" width="960px" height="600px"></canvas>
+        </td>
+        <td style="vertical-align: top">
+          <div class="button" onclick="gallery.next(ANIMATION.FALL, 10, 10, 600);">FALL</div>
+          <div class="button" onclick="gallery.next(ANIMATION.SLIDE, 10, 10, 600);">SLIDE</div>
+          <div class="button" onclick="gallery.next(ANIMATION.FADE, 1, 1, 1000);">FADE</div>
+          <div class="button" onclick="gallery.next(ANIMATION.COLUMNS, 10, 10, 2200);">COLUMNS</div>
+          
+           <div class="button" onclick="gallery.next(ANIMATION.RANDOMCOLUMNS, 10, 10, 2200);">RANDOMCOLUMNS</div>
+              <div class="button" onclick="gallery.next(ANIMATION.SPLICE, 40, 1, 2200);">SPLICE</div>
+              <div class="button" onclick="gallery.next(ANIMATION.EXPLODE, 30, 30, 600);">EXPLODE</div>
+              <div class="button" onclick="gallery.next(ANIMATION.IMPLODE, 10, 10, 800);">IMPLODE</div>
+              <div class="button" onclick="gallery.next(ANIMATION.SHRINKRANDOM, 20, 20, 1200);">SHRINKRANDOM</div>
+              <div class="button" onclick="gallery.next(ANIMATION.SHRINKHORIZONTAL, 30, 20, 1400);">SHRINKHORIZONTAL</div>
+              <div class="button" onclick="gallery.next(ANIMATION.SHRINKVERTICAL, 30, 20, 1400);">SHRINKVERTICAL</div>
+              <div class="button" onclick="gallery.next(ANIMATION.DROP, 4, 4, 1400); ">DROP</div>
+              <div class="button" onclick="gallery.next(ANIMATION.BUILD, 2, 2, 1400);">BUILD</div>
+              <div class="button" onclick="gallery.next(ANIMATION.VCROSSFADE, 1, 60, 1000); ">VCROSSFADE</div>
+              <div class="button" onclick="gallery.next(ANIMATION.HCROSSFADE, 60, 10, 800);">HCROSSFADE</div>
+              <div class="button" onclick="gallery.next(ANIMATION.SPLICE2, 10, 1, 2200);">SPLICE2</div>    
+          
+          
+        </td>
+      </tr>      
+    </table>
     
-    var gallery = $("#myCanvas").transitionObject(
-        {
-          imageClass: 'imageToTransitionTo',
-          width:960,
-          height:600
-        });
+    <!--Some loading stuff-->
+    <div class="loadingContent loadingCentre">
+      <img src="images/gears.gif">			
+      <div id="loadingBar"></div>
+      <div id="loadingText">Preloading the images..</div>
+    </div>
     
-    $(".imageToTransitionTo").preload(
-    {
-        loadedClass: 'mainContent',
-        onComplete: refreshGallery
+    <!--images-->
+    <img src="https://i.imgur.com/zESKRyl.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/jbssfFx.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/0bdcctG.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/JQWSHbz.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/gnvp9Kr.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/eMVyz3J.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/e6JE5eZ.jpg" class="imageToTransitionTo">
+    <img src="https://i.imgur.com/sWU6aOe.jpg" class="imageToTransitionTo">
+    
+    <script>
         
-    });     
-    
-    function refreshGallery()
-    {
-      $(".mainContent").show();
-      gallery.refresh();
-      gallery.start();
-    }
-    
-</script>
-</body>
+        var gallery = $("#myCanvas").transitionObject(
+            {
+              imageClass: 'imageToTransitionTo',
+              width:960,
+              height:600
+            });
+        
+        $(".imageToTransitionTo").preload(
+        {
+            loadedClass: 'mainContent',
+            loadingClass: 'loadingContent',
+            progressFunction: progress,
+            onComplete: refreshGallery
+            
+        });     
+        
+        function refreshGallery()
+        {
+          $(".loadingContent").fadeOut(200, function(){$(".mainContent").fadeIn(200);});	
+          gallery.refresh();
+          gallery.start();
+        }
+        
+        
+        
+        
+        
+        
+        
+      //This is just to make the preloading look pretty (as per https://tolansky.github.io/preload/)
+      function progress(x, total)
+      {				
+        var p1 = parseInt(100/total*x);
+        var p2 = p1 + 1;
+        $("#loadingBar").css("background","linear-gradient(90deg, #3498db " + p1 + "%, #FFF " + p2 + "%)");				
+      }
+        
+    </script>
+  </body>
 </html>

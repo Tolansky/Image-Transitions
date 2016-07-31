@@ -156,7 +156,6 @@ function nextPicture(ctx, animationType, width, height, originalWidth, originalH
     if (startTime === void 0) { startTime = now(); }
     if (firstRun === void 0) { firstRun = 1; }
     if (randomStorage === void 0) { randomStorage = []; }
-    console.log("NEXT");
     //Time calculations
     var delta = now() - startTime; // time progressed so far
     var per = delta / totalTime; // fraction (percentage) of way through total animation time

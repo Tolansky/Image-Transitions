@@ -18,14 +18,60 @@ table
 {
   cursor: pointer;
   background: #2c3e50;
-  border-radius: 5px;
+  text-align:center;
+  color: white;
+  border-radius: 2px;
   color: white;
   font-size: 12px;
-  margin-top: 5px;
+  margin-bottom:1px;
+  height:20px;
+  line-height:20px;
   padding: 4px;
+  font-family:arial;
+}
+.button:hover
+{
+  background:#7f8c8d;
 }
 
 .imageToTransitionTo
 {
   display:none;
+}
+
+
+
+
+.loadingCentre
+{
+  position:absolute;
+  height:130px;
+  width:130px;
+  left:50%;
+  top:50%;
+  margin-left:-65px;
+  margin-top:-65px;
+  background:white;
+}
+
+#loadingBar
+{
+  width:130px;
+  height:15px;
+  margin-top:4px;
+  margin-bottom:4px;
+  border: 1px solid #ccc;
+  border-radius:20px;				
+}
+
+.loadedContent
+{
+  height:800px;
+}
+#loadingText
+{
+  text-align:center;
+  color:#AAA;
+  font-size:11px;
+  font-family:arial;
 }

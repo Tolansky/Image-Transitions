@@ -232,8 +232,7 @@ enum ANIMATION
 
 //The function itself!
 function nextPicture(ctx, animationType, width, height, originalWidth, originalHeight, oldFile, newFile, newCols = 5, newRows = 5, totalTime = 2000, startTime = now(), firstRun = 1, randomStorage = [])
-{
-  console.log("NEXT");
+{  
   //Time calculations
   var delta = now() - startTime;      // time progressed so far
   var per = delta/totalTime;          // fraction (percentage) of way through total animation time
