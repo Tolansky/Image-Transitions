@@ -1,3 +1,4 @@
+/// <reference path="jquery.d.ts" />
 console.clear();
 //////////////////////////////////
 // THIS WOULD RUN IN HTML
@@ -30,6 +31,11 @@ preloadImages(pics); // Preload them to make things easier
 //////////////////////////////////
 // CLASS DEFINITIONS
 //////////////////////////////////
+var pos = (function () {
+    function pos() {
+    }
+    return pos;
+}());
 var square = (function () {
     function square(x, y, canvasWidth, canvasHeight, imagePath, originalWidth, originalHeight, xCount, yCount, xOffset, yOffset, opacity) {
         if (xCount === void 0) { xCount = 4; }
@@ -79,7 +85,7 @@ var square = (function () {
         }
     };
     return square;
-})();
+}());
 var grid = (function () {
     function grid(newWidth, newHeight, originalWidth, originalHeight, columns, rows, file, ctx, opacity) {
         if (opacity === void 0) { opacity = 1; }
@@ -118,7 +124,7 @@ var grid = (function () {
         }
     };
     return grid;
-})();
+}());
 //////////////////////////////////
 // SETUP
 //////////////////////////////////
@@ -233,7 +239,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
             for (var i = 0; i < oldGrid.list.length; i++) {
                 var sq = oldGrid.list[i];
                 var startingTime = (totalTime * (sq.x / oldGrid.columns) / 2);
-                rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
+                var rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
                 var offset = height * smooth(rPer);
                 sq.top += offset;
                 sq.yOffset += offset;
@@ -255,7 +261,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
             for (var i = 0; i < oldGrid.list.length; i++) {
                 var sq = oldGrid.list[i];
                 var startingTime = (totalTime * (randomStorage[sq.x] / oldGrid.columns) / 2);
-                rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
+                var rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
                 var offset = height * smooth(rPer);
                 sq.top += offset;
                 sq.yOffset += offset;
@@ -272,7 +278,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
             for (var i = 0; i < oldGrid.list.length; i++) {
                 var sq = oldGrid.list[i];
                 var startingTime = (totalTime * (sq.x / oldGrid.columns) / 2);
-                rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
+                var rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
                 var offset = height * smooth(rPer);
                 if (sq.x % 2 == 0) {
                     sq.top += offset;
@@ -293,7 +299,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
             for (var i = 0; i < oldGrid.list.length; i++) {
                 var sq = oldGrid.list[i];
                 var startingTime = (totalTime * (sq.x / oldGrid.columns) / 2);
-                rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
+                var rPer = Math.max((delta - startingTime) / (totalTime / 2), 0);
                 var offset = height * smooth(rPer);
                 if (sq.x % 2 == 0) {
                     sq.top += offset;
@@ -486,7 +492,7 @@ function nextPicture(ctx, animationType, width, height, oldFile, newFile, newCol
 ///////////////////////
 function smooth(t) {
     //Credit to https://gist.github.com/gre/1650294 for this equation
-    toReturn = t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    var toReturn = t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
     toReturn = Math.max(toReturn, 0);
     toReturn = Math.min(toReturn, 1);
     return toReturn;
@@ -496,9 +502,9 @@ function getOffset(angle, rad) {
     angle = d2r(angle);
     var x = Math.cos(angle) * rad;
     var y = Math.sin(angle) * rad;
-    var pos = {};
-    pos.x = parseInt(x);
-    pos.y = parseInt(y);
+    var pos = new pos();
+    pos.x = (x);
+    pos.y = (y);
     return pos;
 }
 function r2d(n) {
@@ -527,46 +533,33 @@ function now() {
 }
 //minified because we don't need to read it right now
 function preloadImages(array) {
-    preloadImages.list || (preloadImages.list = []);
-    for (var list = preloadImages.list, i = 0; i < array.length; i++) {
-        var img = new Image;
-        img.onload = function () { var i = list.indexOf(this); -1 !== i && list.splice(i, 1); }, list.push(img), img.src = array[i];
-    }
+    //don't do anything - you should be using the preload plugin ;-)
+    //  preloadImages.list||(preloadImages.list=[]);for(var list=preloadImages.list,i=0;i<array.length;i++){var img=new Image;img.onload=function(){var i=list.indexOf(this);-1!==i&&list.splice(i,1)},list.push(img),img.src=array[i]}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // JQUERY PLUGIN
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-(function ($)
- {
-    //Show the first picture
-    $.fn.showPicture = function (options)
-    {
-        ////////////
-        ///SETTINGS
-        ////////////
-        var settings = $.extend(
-        {
+(function ($) {
+    $.fn.showPicture = function (options) {
+        var settings = $.extend({
             // These are the defaults.        
             picture: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg',
-            width: 960,
+            width: 800,
             height: 600
         }, options);
         var canvas = this[0];
         var ctx = canvas.getContext("2d");
         nextPicture(ctx, ANIMATION.FADE, settings.width, settings.height, settings.picture, settings.picture, 1, 1, 1, now());
     };
-    
-    //Show the next picture
-    $.fn.showNext = function (options)
-    {
+    $.fn.showNext = function (options) {
         //The default settings, can be overridden
         var settings = $.extend({
             // These are the defaults.        
             animation: ANIMATION.FALL,
             fadeTime: 400,
-            width: 960,
+            width: 800,
             height: 600,
             cols: 5,
             rows: 5,
@@ -589,3 +582,4 @@ function preloadImages(array) {
         pic = nextPic;
     };
 }(jQuery));
+$('#myCanvas').showPicture({ picture: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/85280/800_enterprise.jpg' });
