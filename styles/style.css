@@ -1,0 +1,20 @@
+#myCanvas {
+  height: 600px; }
+
+table {
+  margin: 0px auto; }
+
+#controls {
+  width: 100%;
+  text-align: center; }
+
+.button {
+  cursor: pointer;
+  background: #2c3e50;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  margin-top: 5px;
+  padding: 4px; }
+
+/*# sourceMappingURL=style.css.map */

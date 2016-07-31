@@ -1,0 +1,70 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>        
+    <script src="gallery.js"></script>    
+</head>
+<body>    
+<table>
+  <tr>
+    <td height="600px">
+      <canvas id="myCanvas" width="960px" height="600px" ></canvas>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table id="controls">
+        <tr>          
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.FALL, cols: 10, rows:10,  duration: 600}); ">FALL</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.SLIDE, cols:10, rows:10,  duration: 600});">SLIDE</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.FADE, cols:1, rows:1,  duration: 1000});">FADE</div></td>
+        </tr>
+        <tr>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.COLUMNS, cols:10, rows:10,  duration: 2200});">COLUMNS</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.RANDOMCOLUMNS, cols:10, rows:10,  duration: 2200});">RANDOMCOLUMNS</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.SPLICE, cols:40, rows:1,  duration: 2200});">SPLICE</div></td>
+        </tr>
+        <tr>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.EXPLODE, cols:30, rows:30,  duration: 600});">EXPLODE</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.IMPLODE, cols:10, rows:10,  duration: 800});">IMPLODE</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.SHRINKRANDOM, cols:20, rows:20,  duration: 1200});">SHRINKRANDOM</div></td>
+        </tr>
+        <tr>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.SHRINKHORIZONTAL, cols:30, rows:20, duration:1400});">SHRINKHORIZONTAL</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.SHRINKVERTICAL, cols:30, rows:20, duration:1400});">SHRINKVERTICAL</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.DROP, cols:4, rows:4, duration:1400});">DROP</div></td>
+        </tr>
+        <tr>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.BUILD, cols:2, rows:2, duration:1400});">BUILD</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.VCROSSFADE, cols:1, rows:60, duration:1000});">VCROSSFADE</div></td>
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.HCROSSFADE, cols:60, rows:1, duration:800});">HCROSSFADE</div></td>          
+        </tr>
+        <tr>          
+          <td><div class="button" onclick="$('#myCanvas').showNext({animation:ANIMATION.SPLICE2, cols:10, rows:1, duration:2200});">SPLICE2</div></td>                   
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+
+
+<script>
+    var picsToUse = [];
+    picsToUse[0] = 'https://i.imgur.com/zESKRyl.jpg';
+    picsToUse[1] = 'https://i.imgur.com/jbssfFx.jpg';
+    picsToUse[2] = 'https://i.imgur.com/0bdcctG.jpg';
+    picsToUse[3] = 'https://i.imgur.com/JQWSHbz.jpg';
+    picsToUse[4] = 'https://i.imgur.com/gnvp9Kr.jpg';
+    picsToUse[5] = 'https://i.imgur.com/eMVyz3J.jpg';
+    picsToUse[6] = 'https://i.imgur.com/e6JE5eZ.jpg';
+    picsToUse[7] = 'https://i.imgur.com/sWU6aOe.jpg';
+    
+    prepImages(picsToUse);    // prep the images
+    preloadImages(pics);      // Preload them to make things easier
+        
+    $('#myCanvas').showPicture({ picture: picsToUse[0]});
+</script>
+</body>
+</html>
